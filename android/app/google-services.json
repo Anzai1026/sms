@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "551703569960",
+    "project_id": "fire-base-c82a9",
+    "storage_bucket": "fire-base-c82a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:551703569960:android:47ae15fac6e2f2283a371d",
+        "android_client_info": {
+          "package_name": "com.example.sms"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5l-WeAcCma-GI9ICD0E7ktuNAtnMWS5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

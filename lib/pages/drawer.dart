@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sms/pages/account_page.dart';
+import 'package:sms/pages/auth_page.dart';
+import 'package:sms/pages/login_or_register_page.dart';
 import 'package:sms/pages/setting_profile_page.dart';
 
 import 'home_page.dart';
@@ -10,6 +12,7 @@ class MyWidget extends StatelessWidget {
 
   void signUserOut() {
     FirebaseAuth.instance.signOut();
+
   }
 
   @override
@@ -72,7 +75,11 @@ class MyWidget extends StatelessWidget {
           child: ListTile(
             title: Text("L O G O U T"),
             leading: Icon(Icons.logout),
-            onTap: signUserOut,
+            onTap: () {
+              signUserOut();
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginOrRegisterPage()));
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const AuthPage()) , (_) => false);
+            },
           ),
         ),
       ],

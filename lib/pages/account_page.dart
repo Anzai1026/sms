@@ -128,7 +128,7 @@ class _AccountPageState extends State<AccountPage> {
       ),
       appBar: AppBar(
         automaticallyImplyLeading: false, // 戻る矢印を無くす
-        title: const Row(
+        title: Row(
           children: [
             Text(
               'ALIEN.',

@@ -30,45 +30,45 @@ class MyWidget extends StatelessWidget {
               height: 100,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 25.0),
-            child: ListTile(
-              title: Text("H O M E"),
-              leading: Icon(Icons.home),
-              onTap: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => HomePage()));
-              },
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 25.0),
-            child: ListTile(
-              title: Text("S E T T I N G"),
-              leading: Icon(Icons.settings),
-              onTap: () {
-                Navigator.pop(context);
-
-                Navigator.push(
-                    context,
-                  MaterialPageRoute(builder: (context) => SettingProfilePage())
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 25.0),
-            child: ListTile(
-              title: Text("P R O F I L E"),
-              leading: Icon(Icons.account_circle),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AccountPage())
-                );
-              },
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.only(left: 25.0),
+          //   child: ListTile(
+          //     title: Text("H O M E"),
+          //     leading: Icon(Icons.home),
+          //     onTap: () {
+          //       Navigator.push(
+          //           context, MaterialPageRoute(builder: (context) => HomePage()));
+          //     },
+          //   ),
+          // ),
+          // Padding(
+          //   padding: EdgeInsets.only(left: 25.0),
+          //   child: ListTile(
+          //     title: Text("S E T T I N G"),
+          //     leading: Icon(Icons.settings),
+          //     onTap: () {
+          //       Navigator.pop(context);
+          //
+          //       Navigator.push(
+          //           context,
+          //         MaterialPageRoute(builder: (context) => SettingProfilePage())
+          //       );
+          //     },
+          //   ),
+          // ),
+          // Padding(
+          //   padding: EdgeInsets.only(left: 25.0),
+          //   child: ListTile(
+          //     title: Text("P R O F I L E"),
+          //     leading: Icon(Icons.account_circle),
+          //     onTap: () {
+          //       Navigator.push(
+          //           context,
+          //           MaterialPageRoute(builder: (context) => AccountPage())
+          //       );
+          //     },
+          //   ),
+          // ),
         ],),
         Padding(
           padding: EdgeInsets.only(left: 25.0, bottom: 25),

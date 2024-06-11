@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Row(
+        title: Row(
           children: [
             Text(
               'ALIEN.',
@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.message_outlined),
+            icon: Icon(Icons.message_sharp),
             onPressed: () {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => MessagePage()));

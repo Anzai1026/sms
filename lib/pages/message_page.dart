@@ -47,11 +47,13 @@ class _MessagePageState extends State<MessagePage> {
       appBar: AppBar(
         title: Row(
           children: [
-            Text(
-              'ALIEN.',
-              style: TextStyle(
-                fontSize: 35,
-                fontWeight: FontWeight.w900,
+            Center(
+              child: Text(
+                'ALIEN.',
+                style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
           ],

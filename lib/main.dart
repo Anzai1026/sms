@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My Flutter App',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.blue, // ここで色を変更する
       ),
       debugShowCheckedModeBanner: false,
       home: const AuthPage(),

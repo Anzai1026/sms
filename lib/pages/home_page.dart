@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:sms/pages/drawer.dart';
 import '../utils/shared_prefs.dart';
-import 'account_page.dart';
 import 'message_page.dart';
+import 'account_page.dart';
 
 class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
   NoAnimationPageRoute({required WidgetBuilder builder}) : super(builder: builder);
@@ -12,7 +11,6 @@ class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
   @override
   Duration get transitionDuration => const Duration(milliseconds: 0);
 }
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,15 +29,20 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void print_uid() async {
+  void printUid() async {
     final uid = user.uid;
     await SharedPrefs.setUid(uid);
-    print("uid is here : ${uid}");
+    print("uid is here : $uid");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    printUid();
   }
 
   @override
   Widget build(BuildContext context) {
-    print_uid();
     return Scaffold(
       bottomNavigationBar: Container(
         color: Colors.black,
@@ -59,13 +62,13 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {},
               ),
               GButton(
+                icon: Icons.search,
+                text: 'Search',
+              ),
+              GButton(
                 icon: Icons.slow_motion_video,
                 text: 'Reals',
                 onPressed: () {},
-              ),
-              GButton(
-                icon: Icons.search,
-                text: 'Search',
               ),
               GButton(
                 icon: Icons.person_outline,
@@ -85,7 +88,7 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Row(
+        title: const Row(
           children: [
             Text(
               'ALIEN.',
@@ -98,15 +101,37 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.message_sharp),
+            icon: Icon(Icons.comment_rounded),
             onPressed: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MessagePage()));
+                context,
+                MaterialPageRoute(builder: (context) => MessagePage()),
+              );
             },
           ),
         ],
       ),
-      // drawer: MyWidget(),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Welcome to ALIEN.',
+              style: TextStyle(fontSize: 24),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text('Explore'),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

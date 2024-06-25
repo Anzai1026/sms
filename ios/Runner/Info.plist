@@ -2,26 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- Google Sign-in Section -->
-    <key>CFBundleURLTypes</key>
-    <array>
-	    <dict>
-		    <key>CFBundleTypeRole</key>
-		    <string>Editor</string>
-		    <key>CFBundleURLSchemes</key>
-		    <array>
-			    <!-- TODO Replace this value: -->
-			    <!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-			    <string>com.googleusercontent.apps.551703569960-5puu3d5kf2qn27cvq1tvtjsca2tkp0sv</string>
-		    </array>
-	    </dict>
-    </array>
-    <key>GIDClientID</key>
-    <!-- TODO Replace this value: -->
-    <!-- Copied from GoogleService-Info.plist key CLIENT_ID -->
-    <string>551703569960-5puu3d5kf2qn27cvq1tvtjsca2tkp0sv.apps.googleusercontent.com</string>
-    <key>GIDServerClientID</key>
-    <string>551703569960-9rd2mn4h8edov92qf0he9anc43rcft0v.apps.googleusercontent.com</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -40,9 +22,28 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.551703569960-5puu3d5kf2qn27cvq1tvtjsca2tkp0sv</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GIDClientID</key>
+	<string>551703569960-5puu3d5kf2qn27cvq1tvtjsca2tkp0sv.apps.googleusercontent.com</string>
+	<key>GIDServerClientID</key>
+	<string>551703569960-9rd2mn4h8edov92qf0he9anc43rcft0v.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>写真フォルダーへのアクセスを許可します</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -61,11 +62,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>写真フォルダーへのアクセスを許可します</string>
 </dict>
 </plist>

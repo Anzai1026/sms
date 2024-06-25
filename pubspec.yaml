@@ -45,6 +45,7 @@ dependencies:
   google_sign_in: ^6.2.1
   google_sign_in_ios: ^5.7.4
   google_nav_bar: ^5.0.6
+  anim_search_bar: ^2.0.3
 
 dev_dependencies:
   flutter_test:

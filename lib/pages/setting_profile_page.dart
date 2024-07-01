@@ -90,7 +90,7 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                     User newProfile = User(
                       name: controller.text,
                       imagePath: imagePath,
-                      uid: SharedPrefs.getUid()!
+                      id: SharedPrefs.getUid()!
                     );
                     UserFirestore.updateUser(newProfile);
                   },

@@ -3,6 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:sms/firestore/user_firestore.dart';
 import 'package:sms/model/user.dart';
 import 'package:sms/pages/drawer.dart';
+import 'package:sms/pages/search_page.dart';
 import 'package:sms/utils/shared_prefs.dart';
 import 'home_page.dart';
 
@@ -53,7 +54,7 @@ class _AccountPageState extends State<AccountPage> {
   Future<void> _checkFollowing() async {
     String? loginUid = await SharedPrefs.getUid();
     if (loginUid != null && _user != null) {
-      bool isFollowing = await UserFirestore.isFollowing(loginUid, _user!.uid);
+      bool isFollowing = await UserFirestore.isFollowing(loginUid, _user!.id);
       setState(() {
         _isFollowing = isFollowing;
       });
@@ -64,9 +65,9 @@ class _AccountPageState extends State<AccountPage> {
     String? loginUid = await SharedPrefs.getUid();
     if (loginUid != null && _user != null) {
       if (_isFollowing) {
-        await UserFirestore.unfollow(loginUid, _user!.uid);
+        await UserFirestore.unfollow(loginUid, _user!.id);
       } else {
-        await UserFirestore.follow(loginUid, _user!.uid);
+        await UserFirestore.follow(loginUid, _user!.id);
       }
       setState(() {
         _isFollowing = !_isFollowing;
@@ -102,6 +103,12 @@ class _AccountPageState extends State<AccountPage> {
               GButton(
                 icon: Icons.search,
                 text: 'Search',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    NoAnimationPageRoute(builder: (context) => SearchPage()),
+                  );
+                },
               ),
               GButton(
                 icon: Icons.slow_motion_video,

@@ -82,7 +82,7 @@ class UserFirestore {
 
   static Future<void> updateUser(User newProfile) async {
     try {
-      await _userCollection.doc(newProfile.uid).update({
+      await _userCollection.doc(newProfile.id).update({
         'name': newProfile.name,
         'image_path': newProfile.imagePath
       });
@@ -99,7 +99,7 @@ class UserFirestore {
       User user = User(
           name: snapshot.data()!['name'],
           imagePath: snapshot.data()!['image_path'],
-          uid: uid
+          id: uid
       );
       print(snapshot.data()!['name']);
 

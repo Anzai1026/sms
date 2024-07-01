@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:sms/pages/search_page.dart';
 import '../utils/shared_prefs.dart';
 import 'message_page.dart';
 import 'account_page.dart';
@@ -64,6 +65,12 @@ class _HomePageState extends State<HomePage> {
               GButton(
                 icon: Icons.search,
                 text: 'Search',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    NoAnimationPageRoute(builder: (context) => SearchPage()),
+                  );
+                },
               ),
               GButton(
                 icon: Icons.slow_motion_video,

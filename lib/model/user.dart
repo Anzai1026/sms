@@ -1,11 +1,11 @@
 class User {
   String name;
-  String uid;
+  String id;
   String? imagePath;
 
   User({
     required this.name,
-    required this.uid,
+    required this.id,
     this.imagePath,
   });
 }

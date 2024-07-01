@@ -29,7 +29,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
   }
 
   Future<void> fetchRecipientProfileImage() async {
-    String? recipientUid = widget.talkRoom.talkUser.uid;
+    String? recipientUid = widget.talkRoom.talkUser.id;
     if (recipientUid != null) {
       User? recipientUser = await UserFirestore.fetchProfile(recipientUid);
       if (recipientUser != null) {
@@ -84,7 +84,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                         replyToMessage: data['reply_to_message'] ?? '',
                       );
 
-                      final bool isRecipientMessage = widget.talkRoom.talkUser.uid == data['sender_id'];
+                      final bool isRecipientMessage = widget.talkRoom.talkUser.id == data['sender_id'];
 
                       final DateTime currentMessageDate = message.sendTime.toDate();
                       bool showDateHeader = false;
@@ -132,7 +132,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: ListTile(
-                                            leading: const Icon(Icons.delete),
+                                            leading: const Icon(Icons.delete,color: Colors.red,),
                                             title: const Text('Delete'),
                                             onTap: () {
                                               deleteMessage(message.id);

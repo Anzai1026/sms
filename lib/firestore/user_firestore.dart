@@ -47,18 +47,18 @@ class UserFirestore {
 
 
   static Future<String?> insertNewAccount() async {
-    try {
-      final newDoc = await _userCollection.add({
-        'name': 'ななし',
-        'image_path': 'https://t3.ftcdn.net/jpg/05/05/44/78/360_F_505447855_pI5F0LDCyNfZ2rzNowBoBuQ9IgT3EQQ7.jpg',
-      });
-
-      print('アカウント作成完了');
-      return newDoc.id;
-    } on Exception catch (e) {
-      print('アカウント作成失敗 ===== $e');
-      return null;
-    }
+    // try {
+    //   final newDoc = await _userCollection.add({
+    //     'name': 'ななし',
+    //     'image_path': 'https://t3.ftcdn.net/jpg/05/05/44/78/360_F_505447855_pI5F0LDCyNfZ2rzNowBoBuQ9IgT3EQQ7.jpg',
+    //   });
+    //
+    //   print('アカウント作成完了');
+    //   return newDoc.id;
+    // } on Exception catch (e) {
+    //   print('アカウント作成失敗 ===== $e');
+    //   return null;
+    // }
   }
 
   static Future<void> createUser() async {

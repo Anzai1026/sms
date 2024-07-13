@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:sms/pages/drawer.dart';
+import 'package:sms/pages/search_page.dart';
 import 'package:sms/pages/talk_room_page.dart';
 import '../firestore/room_firestore.dart';
 import '../model/talk_room.dart';
@@ -40,6 +41,17 @@ class _MessagePageState extends State<MessagePage> {
     print("uid is here : $uid");
   }
 
+  void navigateToPage(Widget page) {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => page,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     print_uid();
@@ -62,7 +74,7 @@ class _MessagePageState extends State<MessagePage> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              // アイコンがタップされたときの処理
+              navigateToPage(SearchPage());
             },
           ),
           // 他のアクションアイコンを追加できます
@@ -87,7 +99,7 @@ class _MessagePageState extends State<MessagePage> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              NoAnimationPageRoute(
+                              MaterialPageRoute(
                                 builder: (context) => TalkRoomPage(talkRooms[index]),
                               ),
                             );
@@ -111,7 +123,7 @@ class _MessagePageState extends State<MessagePage> {
                                   children: [
                                     Text(
                                       talkRooms[index].talkUser.name,
-                                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontSize: 17),
                                     ),
                                     Text(
                                       talkRooms[index].lastMessage ?? '',

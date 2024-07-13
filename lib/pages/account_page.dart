@@ -27,9 +27,24 @@ class _AccountPageState extends State<AccountPage> {
   int _selectedIndex = 3;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  void navigateToPage(Widget page) {
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => page,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+        ),
+      );
+    }
   }
 
   @override
@@ -43,7 +58,7 @@ class _AccountPageState extends State<AccountPage> {
     String? uid = await SharedPrefs.getUid();
     if (uid != null) {
       User? user = await UserFirestore.fetchProfile(uid);
-      if (user != null) {
+      if (user != null && mounted) {
         setState(() {
           _user = user;
         });
@@ -55,9 +70,11 @@ class _AccountPageState extends State<AccountPage> {
     String? loginUid = await SharedPrefs.getUid();
     if (loginUid != null && _user != null) {
       bool isFollowing = await UserFirestore.isFollowing(loginUid, _user!.id);
-      setState(() {
-        _isFollowing = isFollowing;
-      });
+      if (mounted) {
+        setState(() {
+          _isFollowing = isFollowing;
+        });
+      }
     }
   }
 
@@ -69,9 +86,11 @@ class _AccountPageState extends State<AccountPage> {
       } else {
         await UserFirestore.follow(loginUid, _user!.id);
       }
-      setState(() {
-        _isFollowing = !_isFollowing;
-      });
+      if (mounted) {
+        setState(() {
+          _isFollowing = !_isFollowing;
+        });
+      }
     }
   }
 
@@ -94,35 +113,36 @@ class _AccountPageState extends State<AccountPage> {
                 icon: Icons.home,
                 text: 'Home',
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    NoAnimationPageRoute(builder: (context) => HomePage()),
-                  );
+                  if (mounted) {
+                    navigateToPage(HomePage());
+                  }
                 },
               ),
               GButton(
                 icon: Icons.search,
                 text: 'Search',
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    NoAnimationPageRoute(builder: (context) => SearchPage()),
-                  );
+                  if (mounted) {
+                    navigateToPage(SearchPage());
+                  }
                 },
               ),
               GButton(
                 icon: Icons.slow_motion_video,
-                text: 'Reals',
+                text: 'Reels',
                 onPressed: () {},
               ),
               GButton(
                 icon: Icons.person_outline,
                 text: 'Profile',
-                onPressed: () {},
               ),
             ],
             selectedIndex: _selectedIndex,
-            onTabChange: _onItemTapped,
+            onTabChange: (index) {
+              if (mounted) {
+                _onItemTapped(index);
+              }
+            },
           ),
         ),
       ),
@@ -159,28 +179,31 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
           Text(
-            _user?.name ?? '',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+              _user?.name ?? '',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text(
+              _user?.id ?? '',
+              style: const TextStyle(fontSize: 16, color: Colors.grey)),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Column(
+                Row(
                   children: [
                     Text('100', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     const Text('Posts'),
                   ],
                 ),
-                Column(
+                Row(
                   children: [
                     Text('200', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     const Text('Followers'),
                   ],
                 ),
-                Column(
+                Row(
                   children: [
                     Text('150', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     const Text('Following'),
@@ -190,6 +213,29 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
           const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.white60,
+                    minimumSize: const Size(160, 40),
+                  ),
+                  child: const Text('Follow', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.white60,
+                    minimumSize: const Size(160, 40),
+                  ),
+                  child: const Text('Message', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
+            ],
+          ),
+          // Uncomment the following block if you want to include the follow button and bio
           // Padding(
           //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
           //   child: ElevatedButton(
@@ -210,6 +256,7 @@ class _AccountPageState extends State<AccountPage> {
           //   ),
           // ),
           // const SizedBox(height: 20),
+          // Uncomment the following block if you want to include the posts grid view
           // GridView.builder(
           //   physics: NeverScrollableScrollPhysics(),
           //   shrinkWrap: true,

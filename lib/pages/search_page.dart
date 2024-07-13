@@ -2,10 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:sms/model/user.dart';
-
 import 'account_page.dart';
 import 'home_page.dart';
-
 
 class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
   NoAnimationPageRoute({required WidgetBuilder builder}) : super(builder: builder);
@@ -23,14 +21,8 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController _searchController = TextEditingController();
-  List<User> searchResults = []; // 検索結果を保持するリスト
+  List<User> searchResults = [];
   int _selectedIndex = 1;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   void initState() {
@@ -49,16 +41,17 @@ class _SearchPageState extends State<SearchPage> {
     if (_searchController.text.isNotEmpty) {
       _performSearch(_searchController.text);
     } else {
-      setState(() {
-        searchResults = [];
-      });
+      if (mounted) {
+        setState(() {
+          searchResults = [];
+        });
+      }
     }
   }
 
   Future<void> _performSearch(String query) async {
     try {
-      print('Searching for: $query'); // デバッグ用メッセージ
-
+      print('Searching for: $query');
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('user')
           .where('name', isGreaterThanOrEqualTo: query)
@@ -69,19 +62,41 @@ class _SearchPageState extends State<SearchPage> {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         return User(
           name: data['name'] ?? '',
-          id: doc.id, // FirestoreのドキュメントIDをUIDとして使用
+          id: doc.id,
           imagePath: data['image_path'],
         );
       }).toList();
 
-      setState(() {
-        searchResults = users;
-      });
+      if (mounted) {
+        setState(() {
+          searchResults = users;
+        });
+      }
 
-      print('Search results: $users'); // デバッグ用メッセージ
-
+      print('Search results: $users');
     } catch (e) {
       print('Error searching users: $e');
+    }
+  }
+
+  void _onItemTapped(int index) {
+    if (mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  void navigateToPage(Widget page) {
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => page,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+        ),
+      );
     }
   }
 
@@ -104,35 +119,23 @@ class _SearchPageState extends State<SearchPage> {
                 icon: Icons.home,
                 text: 'Home',
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    NoAnimationPageRoute(builder: (context) => HomePage()),
-                  );
+                  navigateToPage(HomePage());
                 },
               ),
               GButton(
                 icon: Icons.search,
                 text: 'Search',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    NoAnimationPageRoute(builder: (context) => SearchPage()),
-                  );
-                },
               ),
               GButton(
                 icon: Icons.slow_motion_video,
-                text: 'Reals',
+                text: 'Reels',
                 onPressed: () {},
               ),
               GButton(
                 icon: Icons.person_outline,
                 text: 'Profile',
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    NoAnimationPageRoute(builder: (context) => AccountPage()),
-                  );
+                  navigateToPage(AccountPage());
                 },
               ),
             ],
@@ -146,7 +149,7 @@ class _SearchPageState extends State<SearchPage> {
         title: Text('Search Users'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
@@ -172,7 +175,6 @@ class _SearchPageState extends State<SearchPage> {
                   User user = searchResults[index];
                   return ListTile(
                     title: Text(user.name),
-                    subtitle: Text(user.id), // ユーザーのUIDを表示
                     leading: user.imagePath != null
                         ? CircleAvatar(
                       backgroundImage: NetworkImage(user.imagePath!),
@@ -204,12 +206,28 @@ class UserProfilePage extends StatelessWidget {
 
   const UserProfilePage({Key? key, required this.user}) : super(key: key);
 
+  Future<String?> findExistingTalkRoomId(String userId) async {
+    // ユーザーごとに保存されているトークルームのIDを検索するロジック
+    // ここでFirestoreなどのデータベースからトークルームを検索し、存在する場合はそのIDを返す
+    // 存在しない場合はnullを返す
+    // 以下は仮の実装例です
+    // Firestoreからの実際のクエリなどに置き換えてください
+    return 'existing_room_id'; // 例として存在するトークルームIDを返す
+  }
+
+  Future<String> createNewTalkRoom(String userId) async {
+    // 新しいトークルームを作成するロジック
+    // ここでFirestoreなどのデータベースに新しいトークルームを追加し、そのIDを取得する
+    // 以下は仮の実装例です
+    // Firestoreへの実際のデータの追加などに置き換えてください
+    return 'new_room_id'; // 例として新しいトークルームIDを返す
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(user.name),
+        title: Text(user.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: Center(
         child: Padding(
@@ -225,10 +243,58 @@ class UserProfilePage extends StatelessWidget {
                 child: Icon(Icons.person, size: 50),
                 radius: 50,
               ),
-              SizedBox(height: 20),
-              Text(user.name, style: TextStyle(fontSize: 24)),
               SizedBox(height: 10),
-              Text(user.id, style: TextStyle(fontSize: 16, color: Colors.grey)), // UIDを表示
+              Text(user.id, style: TextStyle(fontSize: 16, color: Colors.grey)),
+              const SizedBox(height: 10),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        Text('100', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text('Posts'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('200', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text('Followers'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('150', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text('Following'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white60,
+                        minimumSize: const Size(160, 40),
+                      ),
+                      child: const Text('Follow', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white60,
+                        minimumSize: const Size(160, 40),
+                      ),
+                      child: const Text('Message', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
+                ],
+              ),
             ],
           ),
         ),

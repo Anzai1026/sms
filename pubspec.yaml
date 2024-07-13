@@ -46,11 +46,20 @@ dependencies:
   google_sign_in_ios: ^5.7.4
   google_nav_bar: ^5.0.6
   anim_search_bar: ^2.0.3
+  standard_searchbar: ^2.1.1
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_launcher_icons:
+  android: ture
+  ios: true
+  image_path: "lib/images/ALIEN.png"
+  adaptive_icon_background: "lib/images/gradient_background.png"
+  adaptive_icon_foreground: "lib/images/ALIEN.png"
+  remove_alpha_ios: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

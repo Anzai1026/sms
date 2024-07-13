@@ -56,9 +56,12 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white70,
       appBar: AppBar(
-        title: Text(widget.talkRoom.talkUser.name),
+        title: Row(
+          children: [
+            Text(widget.talkRoom.talkUser.name,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
       body: Stack(
         children: [
@@ -84,7 +87,6 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                         replyToMessage: data['reply_to_message'] ?? '',
                       );
 
-                      final bool isRecipientMessage = widget.talkRoom.talkUser.id == data['sender_id'];
 
                       final DateTime currentMessageDate = message.sendTime.toDate();
                       bool showDateHeader = false;
@@ -145,6 +147,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                                 },
                               );
                             },
+
                             child: Padding(
                               padding: EdgeInsets.only(
                                 top: 10.0,
@@ -164,7 +167,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                                   Container(
                                     constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
                                     decoration: BoxDecoration(
-                                      color: message.isMe ? Colors.greenAccent : Colors.white,
+                                      color: message.isMe ? Colors.blue : Colors.black12,
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -214,7 +217,11 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
               if (replyMessage != null)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  color: Colors.grey.shade200,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black12, // 枠線の色を設定
+                    ),
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -235,7 +242,6 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                   ),
                 ),
               Container(
-                color: Colors.white,
                 height: 60,
                 child: Row(
                   children: [
@@ -244,10 +250,15 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                         padding: const EdgeInsets.all(5.0),
                         child: TextField(
                           controller: controller,
-                          decoration: const InputDecoration(
-                            hintText: 'Type a message',
+                          decoration: InputDecoration(
+                            hintText: 'Aa',
+                            fillColor: Colors.black12,
+                            filled: true,
                             contentPadding: EdgeInsets.only(left: 15),
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+
                           ),
                         ),
                       ),
@@ -267,21 +278,13 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                       icon: const Icon(
                         Icons.send_rounded,
                         size: 40.0,
-                      ),
-                      style: IconButton.styleFrom(
-                        foregroundColor: colors.onPrimary,
-                        backgroundColor: colors.primary,
-                        disabledBackgroundColor: colors.onSurface.withOpacity(0.12),
-                        hoverColor: colors.onPrimary.withOpacity(0.08),
-                        focusColor: colors.onPrimary.withOpacity(0.12),
-                        highlightColor: colors.onPrimary.withOpacity(0.12),
+                        color: Colors.blue,
                       ),
                     ),
                   ],
                 ),
               ),
               Container(
-                color: Colors.white,
                 height: MediaQuery.of(context).padding.bottom,
               ),
             ],

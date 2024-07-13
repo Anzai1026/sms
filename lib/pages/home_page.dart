@@ -25,21 +25,38 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   void printUid() async {
     final uid = user.uid;
     await SharedPrefs.setUid(uid);
-    print("uid is here : $uid");
+    if (mounted) {
+      print("uid is here : $uid");
+    }
   }
 
   @override
   void initState() {
     super.initState();
     printUid();
+  }
+
+  void navigateToPage(Widget page) {
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => page,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+        ),
+      );
+    }
   }
 
   @override
@@ -60,16 +77,12 @@ class _HomePageState extends State<HomePage> {
               GButton(
                 icon: Icons.home,
                 text: 'Home',
-                onPressed: () {},
               ),
               GButton(
                 icon: Icons.search,
                 text: 'Search',
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    NoAnimationPageRoute(builder: (context) => SearchPage()),
-                  );
+                  navigateToPage(SearchPage());
                 },
               ),
               GButton(
@@ -81,10 +94,7 @@ class _HomePageState extends State<HomePage> {
                 icon: Icons.person_outline,
                 text: 'Profile',
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    NoAnimationPageRoute(builder: (context) => AccountPage()),
-                  );
+                  navigateToPage(AccountPage());
                 },
               ),
             ],
@@ -110,10 +120,12 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.comment_rounded),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MessagePage()),
-              );
+              if (mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MessagePage()),
+                );
+              }
             },
           ),
         ],

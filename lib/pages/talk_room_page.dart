@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sms/firestore/room_firestore.dart';
 import 'package:sms/model/message.dart';
-import 'package:intl/intl.dart' as intl;
+import 'package:intl/intl.dart' as intl; // Importing intl package with an alias
 import 'package:sms/model/talk_room.dart';
 import 'package:sms/utils/shared_prefs.dart';
 
@@ -11,7 +11,8 @@ import '../model/user.dart';
 
 class TalkRoomPage extends StatefulWidget {
   final TalkRoom talkRoom;
-  const TalkRoomPage(this.talkRoom, {Key? key}) : super(key: key);
+
+  const TalkRoomPage({Key? key, required this.talkRoom}) : super(key: key);
 
   @override
   State<TalkRoomPage> createState() => _TalkRoomPageState();
@@ -40,8 +41,8 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
     }
   }
 
-  String formatDate(DateTime date) {
-    return intl.DateFormat('yyyy-MM-dd').format(date);
+  String formatDate(DateTime dateTime) {
+    return intl.DateFormat('yyyy-MM-dd').format(dateTime);
   }
 
   bool isNewDay(DateTime current, DateTime previous) {
@@ -59,7 +60,10 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
       appBar: AppBar(
         title: Row(
           children: [
-            Text(widget.talkRoom.talkUser.name,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              widget.talkRoom.talkUser.name ?? '', // Handling null with null-aware operator
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),
@@ -81,14 +85,13 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                       final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
                       final Message message = Message(
                         id: doc.id,
-                        message: data['message'],
+                        message: data['message'] ?? '', // Handling null with null-aware operator
                         isMe: SharedPrefs.fetchUid() == data['sender_id'],
-                        sendTime: data['send_time'],
+                        sendTime: (data['send_time'] as Timestamp).toDate(), // Converting Timestamp to DateTime
                         replyToMessage: data['reply_to_message'] ?? '',
                       );
 
-
-                      final DateTime currentMessageDate = message.sendTime.toDate();
+                      final DateTime currentMessageDate = message.sendTime;
                       bool showDateHeader = false;
                       if (index == snapshot.data!.docs.length - 1) {
                         showDateHeader = true;
@@ -134,7 +137,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: ListTile(
-                                            leading: const Icon(Icons.delete,color: Colors.red,),
+                                            leading: const Icon(Icons.delete, color: Colors.red),
                                             title: const Text('Delete'),
                                             onTap: () {
                                               deleteMessage(message.id);
@@ -147,7 +150,6 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                                 },
                               );
                             },
-
                             child: Padding(
                               padding: EdgeInsets.only(
                                 top: 10.0,
@@ -187,12 +189,17 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                                               style: const TextStyle(color: Colors.black54, fontSize: 12),
                                             ),
                                           ),
-                                        Text(message.message),
+                                        Text(
+                                          message.message,
+                                          style: TextStyle(
+                                            color: message.isMe ? Colors.white : Colors.black,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
                                   Text(
-                                    intl.DateFormat('HH.mm').format(message.sendTime.toDate()),
+                                    intl.DateFormat('HH.mm').format(message.sendTime as DateTime),
                                     style: const TextStyle(fontWeight: FontWeight.w500),
                                   ),
                                 ],
@@ -242,6 +249,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                   ),
                 ),
               Container(
+                color: Colors.deepPurple[50],
                 height: 60,
                 child: Row(
                   children: [
@@ -258,7 +266,6 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-
                           ),
                         ),
                       ),
@@ -285,6 +292,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                 ),
               ),
               Container(
+                color: Colors.deepPurple[50],
                 height: MediaQuery.of(context).padding.bottom,
               ),
             ],

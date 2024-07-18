@@ -1,11 +1,13 @@
 class User {
-  String name;
-  String id;
-  String? imagePath;
+  final String id;
+  final String? name;
+  final String? imagePath;
+  final String? email;
 
   User({
-    required this.name,
     required this.id,
+    this.name,
     this.imagePath,
+    this.email,
   });
 }

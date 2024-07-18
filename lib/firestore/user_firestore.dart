@@ -64,10 +64,20 @@ class UserFirestore {
   static Future<void> createUser() async {
     final myUid = await insertNewAccount();
     if (myUid != null) {
-      await RoomFirestore.createRoom(myUid);
+      // 他のユーザーのUIDを取得して、トークルームを作成します。
+      final users = await fetchUsers();
+      if (users != null) {
+        for (var userDoc in users) {
+          final otherUserUid = userDoc.id;
+          if (otherUserUid != myUid) {
+            await RoomFirestore.createRoom(myUid, otherUserUid);
+          }
+        }
+      }
       await SharedPrefs.setUid(myUid);
     }
   }
+
 
   static Future<List<QueryDocumentSnapshot>?> fetchUsers() async {
     try {

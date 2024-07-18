@@ -18,19 +18,31 @@ class RoomFirestore {
     }
   }
 
-  static Future<void> createRoom(String myUid) async {
+  static Future<String> createRoom(String myUid, String otherUserUid) async {
     try {
-      final docs = await UserFirestore.fetchUsers();
-      if (docs == null) return;
-      for (var doc in docs) {
-        if (doc.id == myUid) continue;
-        await _roomCollection.add({
-          'joined_user_ids': [doc.id, myUid],
-          'created_time': Timestamp.now()
-        });
+      final existingRoomQuery = await _roomCollection
+          .where('joined_user_ids', arrayContains: myUid)
+          .get();
+
+      // Check if a room already exists between these two users
+      for (var doc in existingRoomQuery.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        List<dynamic> userIds = data['joined_user_ids'];
+        if (userIds.contains(otherUserUid)) {
+          return doc.id;
+        }
       }
+
+      // If no room exists, create a new one
+      DocumentReference roomRef = await _roomCollection.add({
+        'joined_user_ids': [myUid, otherUserUid],
+        'created_time': Timestamp.now(),
+        'last_message': '',
+      });
+      return roomRef.id;
     } catch (e) {
       print('ルーム作成失敗 ===== $e');
+      rethrow;
     }
   }
 

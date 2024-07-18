@@ -1,15 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:sms/pages/drawer.dart';
-import 'package:sms/pages/search_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sms/firestore/room_firestore.dart';
+import 'package:sms/model/talk_room.dart';
 import 'package:sms/pages/talk_room_page.dart';
-import '../firestore/room_firestore.dart';
-import '../model/talk_room.dart';
-import '../utils/shared_prefs.dart';
-import 'account_page.dart';
-import 'home_page.dart';
+import 'package:sms/pages/search_page.dart';
+import 'package:sms/utils/shared_prefs.dart';
 
 class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
   NoAnimationPageRoute({required WidgetBuilder builder}) : super(builder: builder);
@@ -19,7 +15,7 @@ class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
 }
 
 class MessagePage extends StatefulWidget {
-  const MessagePage({super.key});
+  const MessagePage({Key? key}) : super(key: key);
 
   @override
   State<MessagePage> createState() => _MessagePageState();
@@ -29,13 +25,13 @@ class _MessagePageState extends State<MessagePage> {
   final user = FirebaseAuth.instance.currentUser!;
   int _selectedIndex = 1;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  void initState() {
+    super.initState();
+    printUid();
   }
 
-  void print_uid() async {
+  void printUid() async {
     final uid = user.uid;
     await SharedPrefs.setUid(uid);
     print("uid is here : $uid");
@@ -54,7 +50,6 @@ class _MessagePageState extends State<MessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    print_uid();
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -77,7 +72,6 @@ class _MessagePageState extends State<MessagePage> {
               navigateToPage(SearchPage());
             },
           ),
-          // 他のアクションアイコンを追加できます
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -92,53 +86,58 @@ class _MessagePageState extends State<MessagePage> {
                 } else {
                   if (futureSnapshot.hasData) {
                     List<TalkRoom> talkRooms = futureSnapshot.data!;
-                    return ListView.builder(
-                      itemCount: talkRooms.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TalkRoomPage(talkRooms[index]),
-                              ),
-                            );
-                          },
-                          child: SizedBox(
-                            height: 70,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: talkRooms[index].talkUser.imagePath == null
-                                        ? null
-                                        : NetworkImage(talkRooms[index].talkUser.imagePath!),
-                                  ),
+                    if (talkRooms.isEmpty) {
+                      return Center(child: Text("No talk rooms available."));
+                    } else {
+                      return ListView.builder(
+                        itemCount: talkRooms.length,
+                        itemBuilder: (context, index) {
+                          var talkUser = talkRooms[index].talkUser;
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TalkRoomPage(talkRoom: talkRooms[index]),
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      talkRooms[index].talkUser.name,
-                                      style: const TextStyle(fontSize: 17),
+                              );
+                            },
+                            child: SizedBox(
+                              height: 70,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: talkUser.imagePath != null
+                                          ? NetworkImage(talkUser.imagePath!)
+                                          : const AssetImage('lib/images/default_avatar.png') as ImageProvider,
                                     ),
-                                    Text(
-                                      talkRooms[index].lastMessage ?? '',
-                                      style: const TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                )
-                              ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        talkUser.name ?? '',  // Handle nullable name
+                                        style: const TextStyle(fontSize: 17),
+                                      ),
+                                      Text(
+                                        talkRooms[index].lastMessage ?? '',
+                                        style: const TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
+                          );
+                        },
+                      );
+                    }
                   } else {
-                    return Center(child: Text("LOGGED IN AS ${user.email!}"));
+                    return Center(child: Text("Failed to fetch talk rooms."));
                   }
                 }
               },

@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Message {
   final String id;
   final String message;
   final bool isMe;
-  final Timestamp sendTime;
+  final DateTime sendTime;
   final String replyToMessage;
 
   Message({
@@ -12,6 +10,6 @@ class Message {
     required this.message,
     required this.isMe,
     required this.sendTime,
-    this.replyToMessage = '',
+    required this.replyToMessage,
   });
 }

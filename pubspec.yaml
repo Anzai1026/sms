@@ -57,8 +57,6 @@ flutter_launcher_icons:
   android: ture
   ios: true
   image_path: "lib/images/ALIEN.png"
-  adaptive_icon_background: "lib/images/gradient_background.png"
-  adaptive_icon_foreground: "lib/images/ALIEN.png"
   remove_alpha_ios: true
 
   # The "flutter_lints" package below contains a set of recommended lints to

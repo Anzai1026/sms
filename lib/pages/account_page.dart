@@ -5,6 +5,7 @@ import 'package:sms/model/user.dart';
 import 'package:sms/pages/drawer.dart';
 import 'package:sms/pages/search_page.dart';
 import 'package:sms/utils/shared_prefs.dart';
+import 'package:sms/firestore/post_firestore.dart';
 import 'home_page.dart';
 
 class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
@@ -25,6 +26,7 @@ class _AccountPageState extends State<AccountPage> {
   User? _user;
   bool _isFollowing = false;
   int _selectedIndex = 3;
+  List<Map<String, dynamic>> _posts = [];
 
   void _onItemTapped(int index) {
     if (mounted) {
@@ -52,6 +54,7 @@ class _AccountPageState extends State<AccountPage> {
     super.initState();
     _fetchUserProfile();
     _checkFollowing();
+    _fetchUserPosts();
   }
 
   Future<void> _fetchUserProfile() async {
@@ -73,6 +76,18 @@ class _AccountPageState extends State<AccountPage> {
       if (mounted) {
         setState(() {
           _isFollowing = isFollowing;
+        });
+      }
+    }
+  }
+
+  Future<void> _fetchUserPosts() async {
+    String? uid = await SharedPrefs.getUid();
+    if (uid != null) {
+      List<Map<String, dynamic>> posts = await PostFirestore.fetchUserPosts(uid);
+      if (mounted) {
+        setState(() {
+          _posts = posts;
         });
       }
     }
@@ -235,49 +250,32 @@ class _AccountPageState extends State<AccountPage> {
                   child: const Text('Message', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
             ],
           ),
-          // Uncomment the following block if you want to include the follow button and bio
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          //   child: ElevatedButton(
-          //     onPressed: _toggleFollow,
-          //     style: ElevatedButton.styleFrom(
-          //       backgroundColor: _isFollowing ? Colors.grey : Colors.blue,
-          //       minimumSize: const Size(double.infinity, 36),
-          //     ),
-          //     child: Text(_isFollowing ? 'Unfollow' : 'Follow'),
-          //   ),
-          // ),
-          // const SizedBox(height: 20),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          //   child: Text(
-          //     _user?.uid ?? 'This is a bio.',
-          //     textAlign: TextAlign.center,
-          //   ),
-          // ),
-          // const SizedBox(height: 20),
-          // Uncomment the following block if you want to include the posts grid view
-          // GridView.builder(
-          //   physics: NeverScrollableScrollPhysics(),
-          //   shrinkWrap: true,
-          //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          //     crossAxisCount: 3,
-          //     crossAxisSpacing: 2,
-          //     mainAxisSpacing: 2,
-          //   ),
-          //   itemCount: 30, // Replace with the actual number of posts
-          //   itemBuilder: (context, index) {
-          //     return Container(
-          //       color: Colors.grey.shade300,
-          //       child: Image.network(
-          //         'https://example.com/post_image.jpg',
-          //         fit: BoxFit.cover,
-          //       ),
-          //     );
-          //   },
-          // ),
+          const SizedBox(height: 20),
+          _buildPostGrid(),
         ],
       ),
+    );
+  }
+
+  Widget _buildPostGrid() {
+    return GridView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 2,
+        mainAxisSpacing: 2,
+      ),
+      itemCount: _posts.length,
+      itemBuilder: (context, index) {
+        return Container(
+          color: Colors.grey.shade300,
+          child: Image.network(
+            _posts[index]['imageUrl'],
+            fit: BoxFit.cover,
+          ),
+        );
+      },
     );
   }
 

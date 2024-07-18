@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:sms/pages/post_page.dart';
 import 'package:sms/pages/search_page.dart';
 import '../utils/shared_prefs.dart';
 import 'message_page.dart';
@@ -147,7 +148,12 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PostPage()),
+          );
+        },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),

@@ -4,24 +4,68 @@ import 'package:sms/model/talk_room.dart';
 import 'package:sms/firestore/room_firestore.dart';
 import 'package:sms/pages/talk_room_page.dart';
 import 'package:sms/utils/shared_prefs.dart';
+import 'package:sms/firestore/user_firestore.dart';
+import 'package:sms/model/post.dart';
+import 'package:sms/firestore/post_firestore.dart';
 
-import '../firestore/user_firestore.dart';
-
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends StatefulWidget {
   final User user;
 
   const UserProfilePage({Key? key, required this.user}) : super(key: key);
 
+  @override
+  _UserProfilePageState createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  bool _isFollowing = false;
+  List<Post> _posts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFollowing();
+    _fetchUserPosts();
+  }
+
+  Future<void> _checkFollowing() async {
+    String? loginUid = await SharedPrefs.getUid();
+    if (loginUid != null) {
+      bool isFollowing = await UserFirestore.isFollowing(loginUid, widget.user.id);
+      setState(() {
+        _isFollowing = isFollowing;
+      });
+    }
+  }
+
+  Future<void> _fetchUserPosts() async {
+    List<Post> posts = await PostFirestore.getPostsByUserId(widget.user.id);
+    setState(() {
+      _posts = posts;
+    });
+  }
+
+  Future<void> _toggleFollow() async {
+    String? loginUid = await SharedPrefs.getUid();
+    if (loginUid != null) {
+      if (_isFollowing) {
+        await UserFirestore.unfollow(loginUid, widget.user.id);
+      } else {
+        await UserFirestore.follow(loginUid, widget.user.id);
+      }
+      setState(() {
+        _isFollowing = !_isFollowing;
+      });
+    }
+  }
+
   Future<void> _createAndNavigateToTalkRoom(BuildContext context) async {
     try {
-      // 自分のユーザーIDを取得
       String myUid = SharedPrefs.fetchUid()!;
-      String otherUserUid = user.id;
+      String otherUserUid = widget.user.id;
 
-      // トークルームを作成または既存のものを取得
       String roomId = await RoomFirestore.createRoom(myUid, otherUserUid);
 
-      // トークルームページに遷移する
       User? recipientUser = await UserFirestore.fetchProfile(otherUserUid);
       if (recipientUser != null) {
         TalkRoom newRoom = TalkRoom(
@@ -36,7 +80,6 @@ class UserProfilePage extends StatelessWidget {
       }
     } catch (e) {
       print('Error creating talk room: $e');
-      // エラーハンドリングが必要な場合はここに追加します
     }
   }
 
@@ -44,16 +87,16 @@ class UserProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(user.name ?? '', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text(widget.user.name ?? '', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              user.imagePath != null
+              widget.user.imagePath != null
                   ? CircleAvatar(
-                backgroundImage: NetworkImage(user.imagePath!),
+                backgroundImage: NetworkImage(widget.user.imagePath!),
                 radius: 50,
               )
                   : CircleAvatar(
@@ -61,7 +104,7 @@ class UserProfilePage extends StatelessWidget {
                 radius: 50,
               ),
               SizedBox(height: 10),
-              Text(user.id, style: TextStyle(fontSize: 16, color: Colors.grey)),
+              Text(widget.user.id, style: TextStyle(fontSize: 16, color: Colors.grey)),
               const SizedBox(height: 10),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -94,13 +137,16 @@ class UserProfilePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _toggleFollow,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: Colors.white60,
+                      backgroundColor: _isFollowing ? Colors.grey : Colors.blue,
                       minimumSize: const Size(160, 40),
                     ),
-                    child: const Text('Follow', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      _isFollowing ? 'Unfollow' : 'Follow',
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   SizedBox(width: 20),
                   ElevatedButton(
@@ -116,10 +162,31 @@ class UserProfilePage extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: _buildPostGrid(),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPostGrid() {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 2.0,
+        mainAxisSpacing: 2.0,
+      ),
+      itemCount: _posts.length,
+      itemBuilder: (context, index) {
+        return Image.network(
+          _posts[index].imageUrl,
+          fit: BoxFit.cover,
+        );
+      },
     );
   }
 }

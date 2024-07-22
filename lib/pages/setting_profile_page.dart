@@ -9,7 +9,7 @@ import 'package:sms/utils/shared_prefs.dart';
 import '../model/user.dart';
 
 class SettingProfilePage extends StatefulWidget {
-  const SettingProfilePage({super.key});
+  const SettingProfilePage({Key? key}) : super(key: key);
 
   @override
   State<SettingProfilePage> createState() => _SettingProfilePageState();
@@ -17,26 +17,40 @@ class SettingProfilePage extends StatefulWidget {
 
 class _SettingProfilePageState extends State<SettingProfilePage> {
   File? image;
-  String imagePath = '';
+  String? imagePath; // Changed to nullable to better handle state updates
   final ImagePicker _picker = ImagePicker();
   final TextEditingController controller = TextEditingController();
 
-  Future<void> selectImage() async{
+  Future<void> selectImage() async {
     XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-    print(pickedImage);
-    if(pickedImage == null) return;
+    if (pickedImage == null) return;
 
     setState(() {
       image = File(pickedImage.path);
     });
   }
 
-  Future<void> uploadImage() async{
-    String path = image!.path.substring(image!.path.lastIndexOf('/') + 1);
-    final ref = FirebaseStorage.instance.ref(path);
-    final storedImage = await ref.putFile(image!);
-    imagePath = await storedImage.ref.getDownloadURL();
-    print(imagePath);
+  Future<void> uploadImage() async {
+    if (image == null) {
+      // Handle case where user does not select an image
+      print('No image selected');
+      return;
+    }
+
+    try {
+      String path = image!.path.substring(image!.path.lastIndexOf('/') + 1);
+      final ref = FirebaseStorage.instance.ref(path);
+      final storedImage = await ref.putFile(image!);
+      imagePath = await storedImage.ref.getDownloadURL();
+      setState(() {
+        // Update the state variable imagePath with the download URL
+        imagePath = imagePath;
+      });
+      print('Image uploaded: $imagePath');
+    } catch (e) {
+      print('Failed to upload image: $e');
+      // Handle error - show snackbar, toast, or dialog to inform user
+    }
   }
 
   @override
@@ -65,10 +79,11 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                   child: Container(
                     alignment: Alignment.center,
                     child: ElevatedButton(
-                        onPressed: () async{
-                          await selectImage();
-                          uploadImage();
-                        }, child: const Text('画像を選択')
+                      onPressed: () async {
+                        await selectImage();
+                        await uploadImage();
+                      },
+                      child: const Text('画像を選択'),
                     ),
                   ),
                 )
@@ -86,16 +101,28 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
             SizedBox(
               width: 150,
               child: ElevatedButton(
-                  onPressed: () async{
+                onPressed: () async {
+                  if (controller.text.isNotEmpty || imagePath != null) {
                     User newProfile = User(
                       name: controller.text,
                       imagePath: imagePath,
-                      id: SharedPrefs.getUid()!
+                      id: SharedPrefs.getUid() ?? '',
                     );
-                    UserFirestore.updateUser(newProfile);
-                  },
-                  child: const Text('編集')),
-            )
+                    await UserFirestore.updateUser(newProfile);
+                    // Optionally show success message to user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('プロフィールが更新されました')),
+                    );
+                  } else {
+                    // Handle case where no changes were made
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('変更がありません')),
+                    );
+                  }
+                },
+                child: const Text('編集'),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,21 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../model/post.dart';
 
 class PostFirestore {
-  static final FirebaseFirestore _firestoreInstance = FirebaseFirestore.instance;
-  static final CollectionReference _postCollection = _firestoreInstance.collection('posts');
+  static final CollectionReference _postCollection = FirebaseFirestore.instance.collection('posts');
 
-  static Future<List<Map<String, dynamic>>> fetchUserPosts(String userId) async {
-    QuerySnapshot snapshot = await _postCollection.where('userId', isEqualTo: userId).get();
-    List<Map<String, dynamic>> posts = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  static Future<void> addPost(String userId, String imageUrl, String description) async {
+    try {
+      await _postCollection.add({
+        'userId': userId,
+        'imageUrl': imageUrl,
+        'description': description,
+      });
+    } catch (e) {
+      print('Error adding post: $e');
+    }
+  }
+
+  static Future<List<Post>> getPostsByUserId(String userId) async {
+    List<Post> posts = [];
+    try {
+      QuerySnapshot querySnapshot = await _postCollection.where('userId', isEqualTo: userId).get();
+      querySnapshot.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        posts.add(Post.fromJson(data));
+      });
+    } catch (e) {
+      print('Error fetching posts: $e');
+    }
     return posts;
   }
 
-  static Future<void> addPost(String userId, String imageUrl, String description) async {
-    await _postCollection.add({
-      'userId': userId,
-      'imageUrl': imageUrl,
-      'description': description,
-      'timestamp': Timestamp.now(),
-    });
+  static Future<void> deletePost(String postId) async {
+    try {
+      await FirebaseFirestore.instance.collection('posts').doc(postId).delete();
+    } catch (e) {
+      print('Error deleting post: $e');
+    }
   }
 }

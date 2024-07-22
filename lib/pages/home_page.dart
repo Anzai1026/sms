@@ -78,24 +78,36 @@ class _HomePageState extends State<HomePage> {
               GButton(
                 icon: Icons.home,
                 text: 'Home',
+                onPressed: () {
+                  if (_selectedIndex != 0) {
+                    _onItemTapped(0);
+                    navigateToPage(HomePage());
+                  }
+                },
               ),
               GButton(
                 icon: Icons.search,
                 text: 'Search',
                 onPressed: () {
-                  navigateToPage(SearchPage());
+                  if (_selectedIndex != 1) {
+                    _onItemTapped(1);
+                    navigateToPage(SearchPage());
+                  }
                 },
               ),
               GButton(
                 icon: Icons.slow_motion_video,
-                text: 'Reals',
+                text: 'Reels',
                 onPressed: () {},
               ),
               GButton(
                 icon: Icons.person_outline,
                 text: 'Profile',
                 onPressed: () {
-                  navigateToPage(AccountPage());
+                  if (_selectedIndex != 3) {
+                    _onItemTapped(3);
+                    navigateToPage(AccountPage());
+                  }
                 },
               ),
             ],
@@ -150,8 +162,8 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PostPage()),
+            context,
+            MaterialPageRoute(builder: (context) => PostPage()),
           );
         },
         tooltip: 'Increment',

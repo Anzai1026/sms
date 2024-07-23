@@ -48,6 +48,7 @@ dependencies:
   anim_search_bar: ^2.0.3
   standard_searchbar: ^2.1.1
   flutter_launcher_icons: ^0.13.1
+  table_calendar: ^3.0.7
 
 dev_dependencies:
   flutter_test:

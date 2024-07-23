@@ -4,9 +4,10 @@ import 'package:sms/firestore/user_firestore.dart';
 import 'package:sms/model/post.dart';
 import 'package:sms/model/user.dart';
 import 'package:sms/pages/drawer.dart';
-import 'package:sms/pages/post_detail_page.dart';  // PostDetailPageをインポート
+import 'package:sms/pages/post_detail_page.dart';
 import 'package:sms/pages/search_page.dart';
 import 'package:sms/pages/setting_profile_page.dart';
+import 'package:sms/pages/todo_page.dart';
 import 'package:sms/utils/shared_prefs.dart';
 import '../firestore/post_firestore.dart';
 import 'home_page.dart';
@@ -73,7 +74,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> _fetchUserPosts() async {
-    String? uid = await SharedPrefs.getUid();
+    String? uid = await SharedPrefs.fetchUid();
     if (uid != null) {
       List<Post> posts = await PostFirestore.getPostsByUserId(uid);
       if (mounted) {
@@ -126,9 +127,11 @@ class _AccountPageState extends State<AccountPage> {
                 },
               ),
               GButton(
-                icon: Icons.slow_motion_video,
-                text: 'Reels',
-                onPressed: () {},
+                icon: Icons.calendar_today_outlined,
+                text: 'Todo',
+                onPressed: () {
+                  navigateToPage(TodoPage());
+                },
               ),
               GButton(
                 icon: Icons.person_outline,
@@ -151,7 +154,7 @@ class _AccountPageState extends State<AccountPage> {
             Text(
               _user?.name ?? '',
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -273,16 +276,18 @@ class _AccountPageState extends State<AccountPage> {
       ),
       itemCount: _posts.length,
       itemBuilder: (context, index) {
-        print('Post image URL: ${_posts[index].imageUrl}');  // デバッグ用ログ
+        print('Post index: $index'); // デバッグ用ログ
+        print('Post image URL: ${_posts[index].imageUrl}');
         return GestureDetector(
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => PostDetailPage(
-                  post: _posts[index],
-                  user: _user!,
-                ),
+                builder: (context) =>
+                    PostDetailPage(
+                      post: _posts[index],
+                      user: _user!,
+                    ),
               ),
             );
           },
@@ -294,5 +299,4 @@ class _AccountPageState extends State<AccountPage> {
       },
     );
   }
-
 }

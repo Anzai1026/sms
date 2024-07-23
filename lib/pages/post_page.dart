@@ -11,6 +11,7 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
+  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   File? _image;
   final ImagePicker _picker = ImagePicker();
@@ -40,7 +41,7 @@ class _PostPageState extends State<PostPage> {
       String imageUrl = await _uploadImageToStorage(_image!);
 
       // Add post to Firestore
-      await PostFirestore.addPost(uid, imageUrl, _descriptionController.text);
+      await PostFirestore.addPost(uid, imageUrl, _titleController.text, _descriptionController.text);
 
       // Navigate back
       Navigator.pop(context);
@@ -52,9 +53,14 @@ class _PostPageState extends State<PostPage> {
         .ref()
         .child('posts')
         .child(DateTime.now().toString() + '.jpg');
+
     await ref.putFile(imageFile);
-    return await ref.getDownloadURL();
+
+    String imageUrl = await ref.getDownloadURL();
+
+    return imageUrl;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +125,15 @@ class _PostPageState extends State<PostPage> {
                 ),
                 alignment: Alignment.center,
               ),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _titleController,
+              decoration: InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 1,
             ),
             SizedBox(height: 20),
             TextField(

@@ -5,6 +5,7 @@ import 'package:sms/model/user.dart';
 import 'package:sms/pages/userprofile_page.dart';
 import 'account_page.dart';
 import 'home_page.dart';
+import 'todo_page.dart'; // TodoPageのインポート
 
 class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
   NoAnimationPageRoute({required WidgetBuilder builder}) : super(builder: builder);
@@ -128,9 +129,11 @@ class _SearchPageState extends State<SearchPage> {
                 text: 'Search',
               ),
               GButton(
-                icon: Icons.slow_motion_video,
-                text: 'Reels',
-                onPressed: () {},
+                icon: Icons.calendar_today_outlined,
+                text: 'Todo',
+                onPressed: () {
+                  navigateToPage(TodoPage());
+                },
               ),
               GButton(
                 icon: Icons.person_outline,
@@ -147,7 +150,17 @@ class _SearchPageState extends State<SearchPage> {
       ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Search Users'),
+        title: Row(
+          children: [
+            Text(
+              'ALIEN.',
+              style: TextStyle(
+                fontSize: 35,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

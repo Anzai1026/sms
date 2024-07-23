@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:sms/pages/post_page.dart';
 import 'package:sms/pages/search_page.dart';
+import 'package:sms/pages/todo_page.dart';
 import '../utils/shared_prefs.dart';
 import 'message_page.dart';
 import 'account_page.dart';
@@ -96,9 +97,11 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               GButton(
-                icon: Icons.slow_motion_video,
-                text: 'Reels',
-                onPressed: () {},
+                icon: Icons.calendar_today_outlined,
+                text: 'Todo',
+                onPressed: () {
+                  navigateToPage(TodoPage());
+                },
               ),
               GButton(
                 icon: Icons.person_outline,
@@ -118,7 +121,7 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Row(
+        title: Row(
           children: [
             Text(
               'ALIEN.',

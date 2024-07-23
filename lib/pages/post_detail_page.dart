@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sms/model/post.dart';
-import 'package:sms/model/user.dart'; // User モデルが必要です。どこかで定義しているか確認してください。
+
+import '../model/user.dart';
 
 class PostDetailPage extends StatelessWidget {
   final Post post;
-  final User user; // 投稿者情報も必要
+  final User user;
 
   const PostDetailPage({Key? key, required this.post, required this.user}) : super(key: key);
 

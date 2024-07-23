@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:sms/pages/post_page.dart';
 import 'package:sms/pages/search_page.dart';
+import 'package:sms/pages/todo_page.dart';
 import '../utils/shared_prefs.dart';
 import 'message_page.dart';
 import 'account_page.dart';
@@ -78,24 +79,38 @@ class _HomePageState extends State<HomePage> {
               GButton(
                 icon: Icons.home,
                 text: 'Home',
+                onPressed: () {
+                  if (_selectedIndex != 0) {
+                    _onItemTapped(0);
+                    navigateToPage(HomePage());
+                  }
+                },
               ),
               GButton(
                 icon: Icons.search,
                 text: 'Search',
                 onPressed: () {
-                  navigateToPage(SearchPage());
+                  if (_selectedIndex != 1) {
+                    _onItemTapped(1);
+                    navigateToPage(SearchPage());
+                  }
                 },
               ),
               GButton(
-                icon: Icons.slow_motion_video,
-                text: 'Reals',
-                onPressed: () {},
+                icon: Icons.calendar_today_outlined,
+                text: 'Todo',
+                onPressed: () {
+                  navigateToPage(TodoPage());
+                },
               ),
               GButton(
                 icon: Icons.person_outline,
                 text: 'Profile',
                 onPressed: () {
-                  navigateToPage(AccountPage());
+                  if (_selectedIndex != 3) {
+                    _onItemTapped(3);
+                    navigateToPage(AccountPage());
+                  }
                 },
               ),
             ],
@@ -106,7 +121,7 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Row(
+        title: Row(
           children: [
             Text(
               'ALIEN.',
@@ -150,8 +165,8 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PostPage()),
+            context,
+            MaterialPageRoute(builder: (context) => PostPage()),
           );
         },
         tooltip: 'Increment',

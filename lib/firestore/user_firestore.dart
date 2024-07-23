@@ -4,11 +4,9 @@ import 'package:sms/model/user.dart';
 import 'package:sms/utils/shared_prefs.dart';
 
 class UserFirestore {
-  static final FirebaseFirestore _firebaseFirestoreInstance = FirebaseFirestore
-      .instance;
+  static final FirebaseFirestore _firebaseFirestoreInstance = FirebaseFirestore.instance;
   static final _userCollection = _firebaseFirestoreInstance.collection('user');
-  static final _followCollection = _firebaseFirestoreInstance.collection(
-      'follow');
+  static final _followCollection = _firebaseFirestoreInstance.collection('follow');
 
   static Future<void> follow(String followerUid, String followedUid) async {
     try {
@@ -24,18 +22,13 @@ class UserFirestore {
 
   static Future<bool> isFollowing(String followerUid, String followedUid) async {
     try {
-      final querySnapshot = await _followCollection
-          .where('follower_uid', isEqualTo: followerUid)
-          .where('followed_uid', isEqualTo: followedUid)
-          .get();
-      return querySnapshot.docs.isNotEmpty;
+      final docSnapshot = await _followCollection.doc('$followerUid-$followedUid').get();
+      return docSnapshot.exists;
     } catch (e) {
       print('フォロー状況の取得失敗 ===== $e');
       return false;
     }
   }
-
-
 
   static Future<void> unfollow(String followerUid, String followedUid) async {
     try {
@@ -45,20 +38,8 @@ class UserFirestore {
     }
   }
 
-
   static Future<String?> insertNewAccount() async {
-    // try {
-    //   final newDoc = await _userCollection.add({
-    //     'name': 'ななし',
-    //     'image_path': 'https://t3.ftcdn.net/jpg/05/05/44/78/360_F_505447855_pI5F0LDCyNfZ2rzNowBoBuQ9IgT3EQQ7.jpg',
-    //   });
-    //
-    //   print('アカウント作成完了');
-    //   return newDoc.id;
-    // } on Exception catch (e) {
-    //   print('アカウント作成失敗 ===== $e');
-    //   return null;
-    // }
+    // アカウント作成の処理を実装
   }
 
   static Future<void> createUser() async {
@@ -78,11 +59,9 @@ class UserFirestore {
     }
   }
 
-
   static Future<List<QueryDocumentSnapshot>?> fetchUsers() async {
     try {
       final snapshot = await _userCollection.get();
-
       return snapshot.docs;
     } catch (e) {
       print('ユーザー情報の取得失敗 ===== $e');
@@ -103,8 +82,6 @@ class UserFirestore {
 
   static Future<User?> fetchProfile(String uid) async {
     try {
-      // final FirebaseAuth auth = FirebaseAuth.instance;
-      // final snapshot = await
       final snapshot = await _userCollection.doc(uid).get();
       User user = User(
           name: snapshot.data()!['name'],
@@ -112,7 +89,6 @@ class UserFirestore {
           id: uid
       );
       print(snapshot.data()!['name']);
-
       return user;
     } catch (e) {
       print('自分のユーザーの情報の取得失敗 ----- $e');

@@ -40,8 +40,8 @@ class _PostPageState extends State<PostPage> {
       // Upload image to Firebase Storage
       String imageUrl = await _uploadImageToStorage(_image!);
 
-      // Add post to Firestore
-      await PostFirestore.addPost(uid, imageUrl, _titleController.text, _descriptionController.text);
+      // Add post to Firestore with correct argument order
+      await PostFirestore.addPost(uid, _titleController.text, imageUrl, _descriptionController.text);
 
       // Navigate back
       Navigator.pop(context);
@@ -60,7 +60,6 @@ class _PostPageState extends State<PostPage> {
 
     return imageUrl;
   }
-
 
   @override
   Widget build(BuildContext context) {

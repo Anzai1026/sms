@@ -17,5 +17,6 @@
 - Provider（状態管理）
 - Push通知 (Firebase Cloud Messaging)
 
-flutter pub get
-flutter run
+## アプリを実行します
+- flutter pub get
+- flutter run

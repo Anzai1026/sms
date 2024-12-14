@@ -1,20 +1,21 @@
-<<<<<<< HEAD
-# sms
+# SNSチャットアプリ（Flutter）
 
-A new Flutter project.
+このプロジェクトは、Flutterを使用して開発されたSNSチャットアプリです。リアルタイムチャット、ユーザー認証、メッセージ送受信機能などを提供し、シンプルで直感的なユーザーインターフェイスを実現しています。
 
-## Getting Started
+## 機能
 
-This project is a starting point for a Flutter application.
+- ユーザー登録・ログイン機能
+- リアルタイムメッセージング
+- メッセージの送受信
+- 画像やメディアのアップロード
+- プッシュ通知機能
 
-A few resources to get you started if this is your first Flutter project:
+## 使用技術
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter
+- Firebase (Authentication, Firestore, Storage)
+- Provider（状態管理）
+- Push通知 (Firebase Cloud Messaging)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# sms
->>>>>>> origin/main
+flutter pub get
+flutter run
